@@ -14,13 +14,18 @@ public class Player : MonoBehaviour {
 
 	private bool onFloor = true;
 
-	/*Limite -Y*/
+	/*Limit -Y*/
 	public float donwLimit = -10f;
 
 	void Start () {
 		controller = GetComponent <CharacterController>();
 		anim = gameObject.GetComponentInChildren<Animator>();
 	}
+
+	//wind
+	public float randomTime = 40f;
+	public float windTime = 5f;
+	public float windTimeInitial = 5f;
 
 	void Update ()
 	{
@@ -56,22 +61,64 @@ public class Player : MonoBehaviour {
 			transform.Rotate(0, turn * turnSpeed * Time.deltaTime, 0);
 			controller.Move(moveDirection * Time.deltaTime);
 			moveDirection.y -= gravity * Time.deltaTime;
+
+		//wind
+
+		//Counts Lost Time
+		randomTime -= Time.deltaTime;
+
+		if (randomTime <= 0)
+		{
+
+			//Counts the wind time desired
+			windTime -= Time.deltaTime;
+
+			speed = 50f;
+
+        }
+
+		else
+		{
+			speed = speed;
+		}
+
+
+		if ((randomTime <= 0) && (windTime <= 0))
+		{
+
+			//If wind time and random time are < 0, this function seeks a new value
+			//It randomizes values from 10 to 19 seconds, 20 is not excluded
+			Random.Range(3, 20);
+
+		}
 	}
+	
 
-
-    private void OnTriggerEnter(Collider collision)
+	private void OnTriggerEnter(Collider collision)
     {
-		//LAMA
+		//mud
 		if (collision.CompareTag("Lama"))
 		{
 			speed = 1f;
+		}
+		
+		//ice
+		if (collision.CompareTag("Ice"))
+		{
+			speed = 15f;
 		}
 	}
 
     private void OnTriggerExit(Collider collision)
     {
-		//LAMA
+		//mud
 		if (collision.CompareTag("Lama"))
+		{
+			speed = 5f;
+		}
+
+		//ice
+		if (collision.CompareTag("Ice"))
 		{
 			speed = 5f;
 		}
